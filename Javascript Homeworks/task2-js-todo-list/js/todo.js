@@ -1,58 +1,78 @@
-const addButton = document.getElementById('liveToastBtn');
-const inputText = document.getElementById('task');
-const todoList = document.getElementById('list');
+// todo add işlemi:
+// 1. yazılacak alan, buton, gösterilecek alanların elementlerini bul.
+// butona tıklayınca yazıyı aşağıda göster.
 
-//functions
-addButton.addEventListener('click', addTodo);
-todoList.addEventListener('click', clearTodo);
+//input element:
+const task = document.querySelector("#task");
+//buton element:
+const liveToastBtn = document.querySelector("#liveToastBtn");
+//liste element:
+const list = document.querySelector("#list");
 
+//butona tıkladığımızda yeni bir liste elementi oluşturulacak.
+function newElement() {
+  //inputa bir şey yazılmamışsa error mesajı verir
+  if (task.value == "" || !task.value.trim()) {
+    $(`.error`).toast("show");
+  }
+  //inputa yeni bir şey yazılırsa
+  else {
+    //yeni bir li elementi oluşturuldu
+    const newTask = document.createElement("li");
+    //oluşturulan elementin içeriğine task inputuna yazılan değer verildi
+    newTask.innerHTML = task.value;
+    //başarılı uyarı mesajı verir
+    $(`.success`).toast("show");
+    //list elementine yeni oluşturulan li elementi eklenir.
+    list.appendChild(newTask);
 
-//alerts
-const alertWarning = document.querySelector('.alert-warning');
+    //remove işlemi için span elementi oluşturuldu
+    const removeBtn = document.createElement("span");
+    //class'ı close yapıldı
+    removeBtn.classList.add("close");
+    const btnImg = document.createTextNode("\u00D7");
+    removeBtn.appendChild(btnImg);
+    //yeni oluşturulan elemente remove butonu eklenir.
+    newTask.appendChild(removeBtn);
 
+    //butona tıklayınca, fonskiyon çalışır
+    removeBtn.addEventListener("click", removeTask);
 
-function addTodo(e) {
-
-    e.preventDefault();
-
-    const isEmpty = str => !str.trim().length;
-
-    if (isEmpty(inputText.value)) {
-        alertWarning.style.display = 'block';
-        setTimeout(() => {
-            alertWarning.style.display = 'none';
-        }, 1500);
-        inputText.value = "";
-    }else {
-        
-    //create todo div
-    const todoDIV = document.createElement('div');
-    todoDIV.classList.add('todo');
-
-    //create todo li
-    const todoLi = document.createElement('li');
-    todoLi.innerHTML = inputText.value;
-    todoDIV.appendChild(todoLi);
-
-    //create delete button
-    const deleteButton = document.createElement('button');
-    deleteButton.classList.add('clearButton')
-    deleteButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-    todoDIV.appendChild(deleteButton);
-
-    //append to list
-    todoList.appendChild(todoDIV);
-
-    //? clear todo input value
-    inputText.value = "";
+    //yazılan task silinir.
+    function removeTask() {
+      newTask.remove();
     }
-}
 
-function clearTodo(e) {
-    const item = e.target;
-    
-    if (item.classList[0] === 'clearButton') {
-        const todo = item.parentElement;
-        todo.remove();
+    //butona tıklayınca, fonskiyon çalışır
+    newTask.addEventListener("click", selectTask);
+    //yapıldı özelliği eklenir
+    function selectTask() {
+      newTask.classList.toggle("checked");
     }
+  }
 }
+//tüm li elementleri seçilir
+const allLi = document.querySelectorAll("li");
+
+//her li elementi için:
+allLi.forEach((e) => {
+  //elemente tıklayınca, fonksiyon çalışır
+  e.addEventListener("click", selectTask);
+  //yapıldı özelliği ekler
+  function selectTask() {
+    e.classList.toggle("checked");
+  }
+  //close butonu eklendi
+  const removeBtn = document.createElement("span");
+  removeBtn.classList.add("close");
+  // x character
+  const btnImg = document.createTextNode("\u00D7");
+  removeBtn.appendChild(btnImg);
+  e.appendChild(removeBtn);
+  //butona tıklayınca, fonskiyon çalışır
+  removeBtn.addEventListener("click", removeTask);
+  //yazılan task silinir.
+  function removeTask() {
+    e.remove();
+  }
+});
