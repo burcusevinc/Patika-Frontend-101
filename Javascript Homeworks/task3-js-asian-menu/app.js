@@ -73,6 +73,107 @@ const menu = [
   },
 ];
 
-//dom elementleri:
-const sectionCenter = document.querySelector(".section-center");
-const containerButton = document.querySelector(".btn-container");
+//butonların oluşturulacağı div :
+let buttonDOM = document.querySelector(".btn-container");
+let buttonArray = ["All", "Korea", "Japan", "China"];
+
+buttonArray.forEach((currentValue) => {
+  //button elementleri oluşturuldu
+  let buttons = document.createElement("button");
+  //butonların id bilgisi parametreden geliyor
+  buttons.id = currentValue;
+  //butonların text bilgisi parametreden geliyor
+  buttons.innerText = currentValue;
+  //butonlara bootstrap stili verildi
+  buttons.classList = "btn-item btn btn-outline-dark d-inline";
+  //div içine button elementleri eklendi
+  buttonDOM.appendChild(buttons);
+});
+
+//tüm butonlar id değerlerine göre bulundu ve tıklama eventi verildi
+document.querySelector("#All").addEventListener("click", click);
+document.querySelector("#Korea").addEventListener("click", click);
+document.querySelector("#Japan").addEventListener("click", click);
+document.querySelector("#China").addEventListener("click", click);
+
+//menünün listelenip gösterileceği fonksiyon:
+function menuList(menuListName) {
+  //yeni bir array oluşturur
+  menuListName.map((index) => {
+    //menünün oluşturulacağı div elementi:
+    let menuDOM = document.querySelector(".section-center");
+    //
+    let divcontainer = document.createElement("div");
+    //büyük div oluşturuldu 6'lık kısımlara bölündü:
+    divcontainer.classList = "menu-items col-6  ";
+    //container, divin içine eklendi.
+    menuDOM.appendChild(divcontainer);
+
+    //img elementi oluşturuldu
+    let img = document.createElement("img");
+    img.classList = "photo";
+    //img yolu, objenin içindeki img key'inden gelecek
+    img.src = index.img;
+    //img elementi, containerın içine oluşturuldu
+    divcontainer.appendChild(img);
+
+    //yemek bilgilerini içermesi için genel bir div oluşturuldu
+    let divInfo = document.createElement("div");
+    divInfo.classList = "menu-info";
+    //containerın içine yeni div eklendi
+    divcontainer.appendChild(divInfo);
+
+    //title ve price bilgilerini eklemek için yeni bir div oluşturuldu
+    let divTitle = document.createElement("div");
+    divTitle.classList = "menu-title";
+    divInfo.appendChild(divTitle);
+
+    //title bilgisi
+    let title = document.createElement("h4");
+    //title bilgisi, obje içinden alındı
+    title.innerHTML = index.title;
+    divTitle.appendChild(title);
+
+    //price bilgisi
+    let price = document.createElement("h4");
+    price.classList = "price";
+    //price bilgisi, obje içinden alındı
+    price.innerHTML = index.price;
+    divTitle.appendChild(price);
+
+    //desc bilgisi için yeni bir div oluşturuldu
+    let divDesc = document.createElement("div");
+    divDesc.classList = "menu-desc";
+    //desc bilgisi, obje içinden alındı
+    divDesc.innerHTML = index.desc;
+    divInfo.appendChild(divDesc);
+  });
+}
+
+//kategorilere göre yemekleri listeleme işlemi:
+//reduce:dizinin tüm elemanları için verilen işlemi gerçekleştirir.
+CategoryMenu = menu.reduce((acc, menuElement) => {
+  let key = menuElement["category"];
+
+  if (!acc[key]) {
+    acc[key] = [];
+  }
+  acc[key].push(menuElement);
+  return acc;
+}, {});
+
+let sectionDOM = document.querySelector(".section-center");
+function click() {
+  while (sectionDOM.hasChildNodes()) {
+    sectionDOM.removeChild(sectionDOM.firstChild);
+  }
+  if (this.id == "All") {
+    menuList(menu);
+  } else if (this.id == "Korea") {
+    menuList(CategoryMenu.Korea);
+  } else if (this.id == "Japan") {
+    menuList(CategoryMenu.Japan);
+  } else if (this.id == "China") {
+    menuList(CategoryMenu.China);
+  }
+}
